@@ -1538,11 +1538,15 @@ var SVGtoPDF = function(doc, svg, x, y, options) {
         for (let i = 0; i < children.length; i++) {
           if (children[i].get('display') !== 'none') {
             if (typeof children[i].getBoundingShape === 'function') {
-              let childShape = children[i].getBoundingShape().clone();
-              if (typeof children[i].getTransformation === 'function') {
-                childShape.transform(children[i].getTransformation());
+              let childShape = children[i].getBoundingShape()?.clone();
+              if(childShape) {
+                if (typeof children[i].getTransformation === 'function') {
+                  childShape.transform(children[i].getTransformation());
+                }
+                shape.mergeShape(childShape);
+              } else {
+                warningCallback('SvgElemHasChildren: child ' + children[i].name + ' has no shape');
               }
-              shape.mergeShape(childShape);
             }
           }
         }
